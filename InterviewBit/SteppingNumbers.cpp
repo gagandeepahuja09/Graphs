@@ -1,28 +1,28 @@
-void stepping(int val, int N, int M, vector<int>& v) {
-    if(val >= N && val <= M) {
-        v.push_back(val);
-    }
-    if(val > M)
+void dfs(int i,int n,int m,vector<int> &rec) {
+    if(i > m) {
         return;
-    int rem = val % 10;
-    if(rem == 0) {
-        stepping(val * 10 + (rem + 1), N, M, v);    
     }
-    else if(rem == 9) {
-        stepping(val * 10 + (rem - 1), N, M, v);
+    if(i <= m && i >= n)
+        rec.push_back(i);
+    int r = i % 10;
+    if(r == 0)
+        dfs(i * 10 + (r + 1), n, m, rec);
+    if(r >= 1 && r <= 8) {
+        dfs(i * 10 + (r - 1), n, m, rec);
+        dfs(i * 10 + (r + 1), n, m, rec);
     }
-    else {
-        stepping(val * 10 + (rem - 1), N, M, v);
-        stepping(val * 10 + (rem + 1), N, M, v);
-    }
+    if(r == 9)
+        dfs(i * 10 + (r - 1), n, m, rec);
 }
 
-vector<int> Solution::stepnum(int N, int M) {
-    vector<int> v;
+vector<int> Solution::stepnum(int A, int B) {
+    vector<int> ret;   
     for(int i = 1; i <= 9; i++) {
-        stepping(i, N, M, v);
+        dfs(i,A,B,ret);
     }
-    sort(v.begin(), v.end());
-    return v;
+    if(A == 0)
+        ret.push_back(0);
+    sort(ret.begin(), ret.end());
+    return ret;
 }
 
