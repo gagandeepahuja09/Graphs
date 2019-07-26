@@ -1,26 +1,32 @@
-bool dfsCycle(vector<int> adj[], int v, vector<bool> &onPath, vector<bool> &visited) {
-    if(visited[v])
+bool dfs(int i, vector<vector<int>>& adj, vector<bool>& vis, 
+vector<bool>& pathVis) {
+    if(pathVis[i])
         return false;
-    visited[v] = onPath[v] = true;
-    for(auto i : adj[v]) {
-        if((!visited[i] && dfsCycle(adj, i, onPath, 
-            visited)) || onPath[i])
-                return true;
+    if(vis[i])
+        return true;
+    vis[i] = pathVis[i] = true;    
+    bool ans = true;    
+    for(int j = 0; j < adj[i].size(); j++) {
+        ans &= dfs(adj[i][j], adj, vis, pathVis);
     }
-    return onPath[v] = false;
+    pathVis[i] = false;
+    return ans;
 }
 
-int Solution::solve(int N, vector<int> &B, vector<int> &C) {
-    vector<int> adj[N];
-    for(int i=0; i<B.size(); i++) {
-        adj[B[i] - 1].push_back(C[i] - 1);
+int Solution::solve(int A, vector<int> &B, vector<int> &C) {
+    vector<vector<int>> adj(A + 1);
+    for(int i = 0; i < B.size(); i++) {
+        adj[B[i]].push_back(C[i]);
     }
-    vector<bool> onPath(N, false);
-    vector<bool> visited(N, false);
-    for(int i=0; i<N; i++) {
-        if(dfsCycle(adj, i, onPath, visited))
-            return false;
+    vector<bool> vis(A + 1, false);
+    vector<bool> pathVis(A + 1, false);
+    bool ans = true;
+    
+    for(int i = 0; i < B.size(); i++) {
+        if(!vis[B[i]]) {
+            ans = ans & dfs(B[i], adj, vis, pathVis);
+        }
     }
-    return true;
+    return ans;
 }
 
