@@ -1,23 +1,27 @@
 class Solution {
 public:
-    int numBusesToDestination(vector<vector<int>>& routes, int S, int T) {
-        unordered_map<int, vector<int>> to_routes;
-        for (int i = 0; i < routes.size(); ++i)
-            for (int j : routes[i])
-                to_routes[j].push_back(i);
-        queue<pair<int, int>> bfs;
-        bfs.push({S, 0});
-        unordered_set<int> seen = {S};
-        while (!bfs.empty()) {
-            int stop = bfs.front().first, bus = bfs.front().second;
-            bfs.pop();
-            if (stop == T)
-                return bus;
-            for (int i : to_routes[stop]) {
-                for (int j : routes[i]) {
-                    if (seen.find(j) == seen.end()) {
-                        seen.insert(j);
-                        bfs.push({j, bus + 1});
+    int numBusesToDestination(vector<vector<int>>& routes, int s, int t) {
+        unordered_map<int, vector<int>> toRoutes;
+        for(int i = 0; i < routes.size(); i++) {
+            for(int j : routes[i]) {
+                toRoutes[j].push_back(i);
+            }
+        }
+        unordered_set<int> vis;
+        queue<vector<int>> q;
+        q.push({ s, 0 });
+        vis.insert(s);
+        while(!q.empty()) {
+            auto temp = q.front();
+            int bus = temp[0], numBuses = temp[1];
+            if(bus == t)
+                return numBuses;
+            q.pop();
+            for(int i : toRoutes[bus]) {
+                for(int j : routes[i]) {
+                    if(!vis.count(j)) {
+                        vis.insert(j);
+                        q.push({ j, numBuses + 1 });
                     }
                 }
                 routes[i].clear();
